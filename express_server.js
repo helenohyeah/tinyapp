@@ -11,6 +11,7 @@ const urlDatabase = {
   "43hb2E": "http://www.spotify.com"
 };
 
+// generates a 6 character alphanumeric string for shortURL
 const generateRandomString = () => {
   let str = '';
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -40,9 +41,10 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log(req.body);
+  urlDatabase[generateRandomString()] = req.body.longURL;
+  // console.log(urlDatabase);
   res.send('OK');
-})
+});
 
 // app.get("/", (req, res) => {
 //   res.send("Hello!");
