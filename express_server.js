@@ -23,6 +23,7 @@ const generateRandomString = () => {
 
 app.set("view engine", "ejs");
 
+// renders home
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
@@ -45,32 +46,22 @@ app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
-// redirects to non-existent shortURL => /u/undefined, statusCode: 302 (Found)
+// ***redirects to non-existent shortURL => /u/undefined, statusCode: 302 (Found)
 
+// takes in new url forms and redirects to show new short and long URL
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body['longURL'];
   res.redirect(`/urls/${shortURL}`);
 });
 
+// takes in delete request and removes entry then redirects
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
-  console.log(urlDatabase);
   res.redirect('/urls');
 });
-
-// app.get("/", (req, res) => {
-//   res.send("Hello!");
-// });
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
-
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
+// ***request to non-existent shortURL => nothing happens, statusCode: 302 (Found)
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
