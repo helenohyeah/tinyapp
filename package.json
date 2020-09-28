@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/helenohyeah/tinyapp/issues"
   },
-  "homepage": "https://github.com/helenohyeah/tinyapp#readme"
+  "homepage": "https://github.com/helenohyeah/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
