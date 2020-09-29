@@ -43,7 +43,13 @@ const generateRandomString = () => {
 const getNextNum = (num) => {
   num++;
   return num;
-}
+};
+
+const getUserObj = (userId) => {
+  for (const user in users) {
+    if (users[user]['id'] === userId) return users[user];
+  }
+};
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -51,17 +57,22 @@ app.get("/", (req, res) => {
 
 // browse home page
 app.get("/urls", (req, res) => {
+  const userId = req.cookies['username'];
+  const user = getUserObj(userId);
+  console.log(user);
   const templateVars = { 
     urls: urlDatabase,
-    username: req.cookies['username'] 
+    user
   };
   res.render('urls_index', templateVars);
 });
 
 // browse create a new url page
 app.get('/urls/new', (req, res) => {
+  const userId = req.cookies['username'];
+  const user = getUserObj(userId);
   const templateVars = {
-    username: req.cookies['username']
+    user
   }
   res.render('urls_new', templateVars);
 });
@@ -70,10 +81,12 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
+  const userId = req.cookies['username'];
+  const user = getUserObj(userId);
   const templateVars = {
     shortURL,
     longURL,
-    username: req.cookies['username'] 
+    user
   };
   res.render('urls_show', templateVars);
 });
@@ -87,8 +100,10 @@ app.get('/u/:shortURL', (req, res) => {
 
 // browse and render register page
 app.get('/register', (req, res) => {
+  const userId = req.cookies['username'];
+  const user = getUserObj(userId);
   const templateVars = {
-    username: req.cookies['username']
+    user
   }
   res.render('register', templateVars);
 });
@@ -119,6 +134,7 @@ app.post('/register', (req, res) => {
     email,
     password
   };
+  console.log(users);
   res.cookie('username', id);
   res.redirect('/urls');
 })
