@@ -15,15 +15,14 @@
 
     <div>
       <% if (username === undefined) { %>
-        <form method="POST" action="/login">
-          <label for="">Username:</label>
-          <input type="text" name="username">
-          <button type="submit">Login</button>
+        <form class="form-inline" method="POST" action="/login">
+          <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 0 1em">
+          <button class="btn btn-outline-dark" type="submit">Login</button>
         </form>
       <% } else { %>
-        <p>Logged In As: <%= username %></p>
         <form method="POST" action="/logout">
-          <button type="submit">Logout</button>
+          <label style="margin: 0 1em">Logged In As: <%= username %></label>
+          <button class="btn btn-outline-dark" type="submit">Logout</button>
         </form>
       <% } %>
     </div>
