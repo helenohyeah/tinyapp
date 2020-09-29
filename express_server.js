@@ -59,7 +59,6 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.cookies['username'];
   const user = getUserObj(userId);
-  console.log(user);
   const templateVars = { 
     urls: urlDatabase,
     user
@@ -126,15 +125,20 @@ app.post('/logout', (req, res) => {
 
 app.post('/register', (req, res) => {
   const num = getNextNum(Math.max(...Object.keys(users)));
+  const id = generateRandomString();
   const email = req.body['email'];
   const password = req.body['password'];
-  const id = generateRandomString();
+
+  if (email === '' || password === '') {
+    res.status(400).send('Oops missing email and/or password!');
+    return;
+  }
+
   users[num] = {
     id,
     email,
     password
   };
-  console.log(users);
   res.cookie('username', id);
   res.redirect('/urls');
 })
