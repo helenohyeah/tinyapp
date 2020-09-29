@@ -40,29 +40,32 @@ app.get('/urls/new', (req, res) => {
 
 // browse individual short url page
 app.get('/urls/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
   const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    shortURL,
+    longURL
   };
   res.render('urls_show', templateVars);
 });
 
 // redirector that takes the short url and sends user to the matching longURL
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+  res.redirect(longURL || '/*');
 });
-// ***redirects to non-existent shortURL => /u/undefined, statusCode: 302 (Found)
 
 // catch all
 app.get('*', (req, res) => {
   res.status(404).send('404 Not Found :(');
-})
+});
 
 // takes in new url forms and redirects to show new short and long URL
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body['longURL'];
+  const longURL = req.body['longURL'];
+  urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -72,7 +75,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
-// ***request to non-existent shortURL => nothing happens, statusCode: 302 (Found)
 
 // updates a url in the database
 app.post('/urls/:shortURL', (req, res) => {
