@@ -77,6 +77,11 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('urls');
+});
+
 // takes in new url forms and redirects to show new short and long URL
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
