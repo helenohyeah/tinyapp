@@ -4,7 +4,9 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.set("view engine", "ejs");
 
+// hardcoded 'database'
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -21,18 +23,18 @@ const generateRandomString = () => {
   return str;
 };
 
-app.set("view engine", "ejs");
-
-// renders home
+// renders home page
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
+// renders create new short url page
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 })
 
+// renders shortened url page
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { 
     shortURL: req.params.shortURL,
@@ -62,6 +64,14 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 // ***request to non-existent shortURL => nothing happens, statusCode: 302 (Found)
+
+// updates a url in the database
+app.post('/urls/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = req.body['id'];
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`);
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
