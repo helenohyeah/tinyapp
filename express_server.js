@@ -32,11 +32,11 @@ app.get("/urls", (req, res) => {
 // renders create new short url page
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
-})
+});
 
 // renders shortened url page
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
   };
@@ -71,7 +71,7 @@ app.post('/urls/:shortURL', (req, res) => {
   const longURL = req.body['id'];
   urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
