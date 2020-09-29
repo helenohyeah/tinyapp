@@ -23,18 +23,22 @@ const generateRandomString = () => {
   return str;
 };
 
-// renders home page
+app.get("/", (req, res) => {
+  res.redirect("/urls");
+});
+
+// browse home page
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
-// renders create new short url page
+// browse create a new url page
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
-// renders shortened url page
+// browse individual short url page
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -43,12 +47,17 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-// redirects request to the matching longURL
+// redirector that takes the short url and sends user to the matching longURL
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 // ***redirects to non-existent shortURL => /u/undefined, statusCode: 302 (Found)
+
+// catch all
+app.get('*', (req, res) => {
+  res.status(404).send('404 Not Found :(');
+})
 
 // takes in new url forms and redirects to show new short and long URL
 app.post('/urls', (req, res) => {
