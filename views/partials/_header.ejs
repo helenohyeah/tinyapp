@@ -14,12 +14,18 @@
     </div>
 
     <div>
-      <p><%= username %></p>
-      <form method="POST" action="/login">
-        <label for="">Username:</label>
-        <input type="text" name="username">
-        <button type="submit">Login</button>
-      </form>
+      <% if (username === undefined) { %>
+        <form method="POST" action="/login">
+          <label for="">Username:</label>
+          <input type="text" name="username">
+          <button type="submit">Login</button>
+        </form>
+      <% } else { %>
+        <p><%= username %></p>
+        <form method="POST" action="/logout">
+          <button type="submit">Logout</button>
+        </form>
+      <% } %>
     </div>
 
   </nav>
