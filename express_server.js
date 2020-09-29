@@ -9,11 +9,25 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-// hardcoded 'database'
+// hardcoded url data
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
   "43hb2E": "http://www.spotify.com"
+};
+
+// hardcoded user data
+const users = { 
+  "1": {
+    id: "42hb2E", 
+    email: "helen@email.com", 
+    password: "password"
+  },
+ "2": {
+    id: "9sDexK", 
+    email: "melon@example.com", 
+    password: "internet"
+  }
 };
 
 // generates a 6 character alphanumeric string for shortURL
@@ -25,6 +39,11 @@ const generateRandomString = () => {
   }
   return str;
 };
+
+const getNextNum = (num) => {
+  num++;
+  return num;
+}
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -66,6 +85,7 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL || '/*');
 });
 
+// browse and render register page
 app.get('/register', (req, res) => {
   const templateVars = {
     username: req.cookies['username']
@@ -88,6 +108,20 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('urls');
 });
+
+app.post('/register', (req, res) => {
+  const num = getNextNum(Math.max(...Object.keys(users)));
+  const email = req.body['email'];
+  const password = req.body['password'];
+  const id = generateRandomString();
+  users[num] = {
+    id,
+    email,
+    password
+  };
+  res.cookie('username', id);
+  res.redirect('/urls');
+})
 
 // takes in new url forms and redirects to show new short and long URL
 app.post('/urls', (req, res) => {
