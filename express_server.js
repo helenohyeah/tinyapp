@@ -66,6 +66,13 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL || '/*');
 });
 
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies['username']
+  }
+  res.render('register', templateVars);
+});
+
 // catch all
 app.get('*', (req, res) => {
   res.status(404).send('404 Not Found :(');
