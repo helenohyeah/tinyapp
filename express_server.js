@@ -32,13 +32,19 @@ app.get("/", (req, res) => {
 
 // browse home page
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase,
+    username: req.cookies['username'] 
+  };
   res.render('urls_index', templateVars);
 });
 
 // browse create a new url page
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = {
+    username: req.cookies['username']
+  }
+  res.render('urls_new', templateVars);
 });
 
 // browse individual short url page
@@ -47,7 +53,8 @@ app.get('/urls/:shortURL', (req, res) => {
   const longURL = urlDatabase[shortURL];
   const templateVars = {
     shortURL,
-    longURL
+    longURL,
+    username: req.cookies['username'] 
   };
   res.render('urls_show', templateVars);
 });
