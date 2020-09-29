@@ -1,9 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // hardcoded 'database'
@@ -59,6 +62,12 @@ app.get('/u/:shortURL', (req, res) => {
 // catch all
 app.get('*', (req, res) => {
   res.status(404).send('404 Not Found :(');
+});
+
+app.post('/login', (req, res) => {
+  const value = req.body['username'];
+  res.cookie('username', value);
+  res.redirect('/urls');
 });
 
 // takes in new url forms and redirects to show new short and long URL
