@@ -112,7 +112,6 @@ app.get('/urls/new', (req, res) => {
 });
 
 // browse individual short url page and allow user to edit only if user is logged in
-// ## ISSUE: any user can modify any shortURL page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL]['longURL'];
@@ -123,7 +122,13 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL,
     user
   };
-  (user === undefined) ? templateVars['loggedIn'] = false : templateVars['loggedIn'] = true;
+  if (user === undefined) {
+    templateVars['loggedIn'] = false
+  } else if (urlDatabase[shortURL]['userId'] !== userId) {
+    templateVars['loggedIn'] = false
+  } else {
+    templateVars['loggedIn'] = true;
+  }
   res.render('urls_show', templateVars);
 });
 
