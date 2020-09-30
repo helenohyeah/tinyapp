@@ -117,9 +117,8 @@ app.get('/urls/:shortURL', (req, res) => {
   if (!Object.keys(urlDatabase).includes(shortURL)) {
     res.redirect('/*');
     return;
-  } else {
-    const longURL = urlDatabase[shortURL]['longURL'];
   }
+  const longURL = urlDatabase[shortURL]['longURL'];
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
