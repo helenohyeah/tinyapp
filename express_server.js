@@ -14,18 +14,18 @@ const urlDatabase = {
   'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E' },
   '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E' },
   '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK' }
-}
+};
 
 // hardcoded user data
-const users = { 
+const users = {
   "1": {
-    id: "42hb2E", 
-    email: "helen@gmail.com", 
+    id: "42hb2E",
+    email: "helen@gmail.com",
     password: "zzzz"
   },
- "2": {
-    id: "9sDexK", 
-    email: "melon@gmail.com", 
+  "2": {
+    id: "9sDexK",
+    email: "melon@gmail.com",
     password: "aaaa"
   }
 };
@@ -80,7 +80,7 @@ const getUrlsForUser = (id) => {
   return urls;
 };
 
-const getUserIdByShortURL = (shortURL) => {;
+const getUserIdByShortURL = (shortURL) => {
   for (const url in urlDatabase) {
     if (url === shortURL) return urlDatabase[url]['userId'];
   }
@@ -95,7 +95,7 @@ app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const urls = getUrlsForUser(userId);
-  const templateVars = { 
+  const templateVars = {
     urls,
     user,
   };
@@ -109,7 +109,7 @@ app.get('/urls/new', (req, res) => {
   const user = getUserObjById(userId);
   const templateVars = {
     user
-  }
+  };
   if (user === undefined) {
     res.redirect('/login');
     return;
@@ -133,9 +133,9 @@ app.get('/urls/:shortURL', (req, res) => {
     user
   };
   if (user === undefined) {
-    templateVars['loggedIn'] = false
+    templateVars['loggedIn'] = false;
   } else if (urlDatabase[shortURL]['userId'] !== userId) {
-    templateVars['loggedIn'] = false
+    templateVars['loggedIn'] = false;
   } else {
     templateVars['loggedIn'] = true;
   }
@@ -155,7 +155,7 @@ app.get('/register', (req, res) => {
   const user = getUserObjById(userId);
   const templateVars = {
     user
-  }
+  };
   res.render('register', templateVars);
 });
 
@@ -165,7 +165,7 @@ app.get('/login', (req, res) => {
   const user = getUserObjById(userId);
   const templateVars = {
     user
-  }
+  };
   res.render('login', templateVars);
 });
 
@@ -228,7 +228,7 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body['longURL'];
   const userId = req.cookies['user_id'];
-  urlDatabase[shortURL] = { 
+  urlDatabase[shortURL] = {
     longURL,
     userId
   };
