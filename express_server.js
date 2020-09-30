@@ -90,7 +90,7 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-// browse urls that I created
+// browse urls that the user created
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
@@ -224,7 +224,11 @@ app.post('/register', (req, res) => {
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body['longURL'];
-  urlDatabase[shortURL]['longURL'] = longURL;
+  const userId = req.cookies['user_id'];
+  urlDatabase[shortURL] = { 
+    longURL,
+    userId
+  };
   res.redirect(`/urls/${shortURL}`);
 });
 
