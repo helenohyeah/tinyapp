@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
+// Helpers
+const { getUserByEmail } = require('./helpers');
+
 // Server set-up
 const app = express();
 const PORT = 8080; // default port 8080
@@ -81,11 +84,11 @@ const getUserIdByShortURL = (shortURL) => {
   }
 };
 
-const getUserByEmail = (email, db) => {
-  for (const user in db) {
-    if (db[user]['email'] === email) return db[user];
-  }
-};
+// const getUserByEmail = (email, db) => {
+//   for (const user in db) {
+//     if (db[user]['email'] === email) return db[user];
+//   }
+// };
 
 app.get("/", (req, res) => {
   const userId = req.session['user_id'];
