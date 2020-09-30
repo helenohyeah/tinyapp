@@ -102,8 +102,8 @@ const getUserIdByShortURL = (shortURL) => {
 };
 
 const getUserIdByEmail = (email) => {
-  for (const url in urlDatabase) {
-    if (urlDatabase[url]['email'] === email) return urlDatabase[url]['userId'];
+  for (const user in users) {
+    if (users[user]['email'] === email) return users[user]['id'];
   }
 };
 
@@ -205,18 +205,17 @@ app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = req.body['password'];
   const hashedPassword = getHashedPasswordByEmail(email);
-  const id = getUserIdByEmail(email);
-
+  
   // invalid email
   if (!lookupEmail(email)) {
     res.status(403).send('Oh no, email not found.');
     return;
-  // invalid password
+    // invalid password
   } else if (!bcrypt.compareSync(password, hashedPassword)) {
     res.status(403).send('Oh no, password doesn\'t match our records.');
     return;
   } else {
-    const user = getUserObjByEmail(email);
+    const id = getUserIdByEmail(email);
     req.session.user_id = id;
     res.redirect('/urls');
   }
@@ -252,6 +251,7 @@ app.post('/register', (req, res) => {
     email,
     password: hashedPassword
   };
+  console.log(id);
   req.session.user_id = id;
   res.redirect('/urls');
 });
