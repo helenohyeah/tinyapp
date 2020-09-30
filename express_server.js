@@ -51,6 +51,13 @@ const getUserObj = (userId) => {
   }
 };
 
+const lookupEmail = (email) => {
+  for (const user in users) {
+    if (users[user]['email'] === email) return true;
+  }
+  return false;
+}
+
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
@@ -131,6 +138,9 @@ app.post('/register', (req, res) => {
 
   if (email === '' || password === '') {
     res.status(400).send('Oops missing email and/or password!');
+    return;
+  } else if (lookupEmail(email)) {
+    res.status(400).send('Oops email already exists!');
     return;
   }
 
