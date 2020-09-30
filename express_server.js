@@ -67,12 +67,6 @@ const lookupEmail = (email) => {
   return false;
 };
 
-const getHashedPasswordByEmail = (email) => {
-  for (const user in users) {
-    if (users[user]['email'] === email) return users[user]['password'];
-  }
-};
-
 const getUrlsForUser = (id) => {
   const urls = {};
   for (const url in urlDatabase) {
@@ -84,12 +78,6 @@ const getUrlsForUser = (id) => {
 const getUserIdByShortURL = (shortURL) => {
   for (const url in urlDatabase) {
     if (url === shortURL) return urlDatabase[url]['userId'];
-  }
-};
-
-const getUserIdByEmail = (email) => {
-  for (const user in users) {
-    if (users[user]['email'] === email) return users[user]['id'];
   }
 };
 
