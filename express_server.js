@@ -97,7 +97,12 @@ const getUserIdByShortURL = (shortURL) => {
 };
 
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  const userId = req.cookies['user_id'];
+  if (userId === undefined) {
+    res.redirect('/login');
+  } else {
+    res.redirect('/urls');
+  }
 });
 
 // browse urls that the user created only if user is logged in
