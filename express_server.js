@@ -10,12 +10,6 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // hardcoded url data
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com",
-//   "43hb2E": "http://www.spotify.com"
-// };
-
 const urlDatabase = {
   'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E' },
   '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E' },
@@ -90,7 +84,7 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-// browse urls that the user created
+// browse urls that the user created only if user is logged in
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
@@ -120,7 +114,8 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
-// get individual short url page and allow user to edit
+// browse individual short url page and allow user to edit only if user is logged in
+// ## ISSUE: any user can modify any shortURL page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL]['longURL'];
@@ -138,14 +133,14 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-// redirector that takes the short url and sends user to the matching longURL
+// redirector that sends user to a longURL given a shortURL
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL]['longURL'];
   res.redirect(longURL || '/*');
 });
 
-// browse and render register page
+// render register page
 app.get('/register', (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
@@ -155,6 +150,7 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
+// render login page
 app.get('/login', (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
@@ -176,28 +172,26 @@ app.post('/login', (req, res) => {
   const password = req.body['password'];
 
   if (!lookupEmail(email)) {
-    res.status(403).send('Oh no, email not found!');
+    res.status(403).send('Oh no, email not found.');
     return;
   } else if (!verifyPassword(email, password)) {
-    res.status(403).send('Oops, password doesn\'t match our records');
+    res.status(403).send('Oh no, password doesn\'t match our records.');
     return;
   } else {
     const user = getUserObjByEmail(email);
     res.cookie('user_id', user['id']);
     res.redirect('/urls');
   }
-  // sets cookie using userid
-  
-  // const value = req.body['username'];
-  // res.cookie('username', value);
-  // res.redirect('/urls');
 });
 
+// logout and clear cookies
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('urls');
 });
 
+// register with email and password
+// handles empty email or password, email already exists
 app.post('/register', (req, res) => {
   const num = getNextNum(Math.max(...Object.keys(users)));
   const id = generateRandomString();
@@ -205,10 +199,10 @@ app.post('/register', (req, res) => {
   const password = req.body['password'];
 
   if (email === '' || password === '') {
-    res.status(400).send('Oops missing email and/or password!');
+    res.status(400).send('Oh no, empty email and/or password.');
     return;
   } else if (lookupEmail(email)) {
-    res.status(400).send('Oops email already exists!');
+    res.status(400).send('Oops, that email already exists.');
     return;
   }
   users[num] = {
@@ -220,7 +214,7 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
-// takes in new url forms and redirects to show new short and long URL
+// creates a new shortURL given a longURL
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body['longURL'];
@@ -232,14 +226,14 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// takes in delete request and removes entry then redirects
+// deletes a shortURL given the shortURL to delete then redirects to home
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
 
-// updates a url in the database
+// updates the longURL of a given shortURL
 app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body['id'];
