@@ -15,10 +15,14 @@
 
     <div>
       <% if (user === undefined) { %>
-        <form class="form-inline" method="POST" action="/login">
-          <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 0 1em">
-          <button class="btn btn-outline-dark" type="submit">Login</button>
-        </form>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <form method="GET" action="/login">
+            <button class="btn btn-dark" type="submit" style="margin: 0 1em">Login</button>
+          </form>
+          <form method="GET" action="/register">
+            <button class="btn btn-primary" type="submit">Register</button>
+          </form>
+        </div>
       <% } else { %>
         <form method="POST" action="/logout">
           <label style="margin: 0 1em">Logged In As: <%= user.email %></label>

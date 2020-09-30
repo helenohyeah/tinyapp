@@ -152,7 +152,7 @@ app.post('/register', (req, res) => {
     res.status(400).send('Oops email already exists!');
     return;
   }
-
+console.log(users);
   users[num] = {
     id,
     email,
