@@ -67,23 +67,9 @@ const lookupEmail = (email) => {
   return false;
 };
 
-const verifyPassword = (email, password) => {
-  let userObj = {};
-  for (const user in users) {
-    if (users[user]['email'] === email) userObj = users[user];
-  }
-  return (userObj['password'] === password) ? true : false;
-};
-
 const getHashedPasswordByEmail = (email) => {
   for (const user in users) {
     if (users[user]['email'] === email) return users[user]['password'];
-  }
-};
-
-const getUserObjByEmail = (email) => {
-  for (const user in users) {
-    if (users[user]['email'] === email) return users[user];
   }
 };
 
@@ -210,13 +196,13 @@ app.post('/login', (req, res) => {
   if (!lookupEmail(email)) {
     res.status(403).send('Oh no, email not found.');
     return;
-    // invalid password
+  // invalid password
   } else if (!bcrypt.compareSync(password, hashedPassword)) {
     res.status(403).send('Oh no, password doesn\'t match our records.');
     return;
   } else {
     const id = getUserIdByEmail(email);
-    req.session.user_id = id;
+    req.session['user_id'] = id;
     res.redirect('/urls');
   }
 });
@@ -252,7 +238,7 @@ app.post('/register', (req, res) => {
     password: hashedPassword
   };
   console.log(id);
-  req.session.user_id = id;
+  req.session['user_id'] = id;
   res.redirect('/urls');
 });
 
