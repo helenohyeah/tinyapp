@@ -114,6 +114,10 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
+app.get('/login', (req, res) => {
+  res.render('login', templateVars);
+});
+
 // catch all
 app.get('*', (req, res) => {
   res.status(404).send('404 Not Found :(');
