@@ -114,7 +114,12 @@ app.get('/urls/new', (req, res) => {
 // browse individual short url page and allow user to edit only if user is logged in
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL]['longURL'];
+  if (!Object.keys(urlDatabase).includes(shortURL)) {
+    res.redirect('/*');
+    return;
+  } else {
+    const longURL = urlDatabase[shortURL]['longURL'];
+  }
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
