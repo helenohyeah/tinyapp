@@ -26,13 +26,13 @@ const urlDatabase = {
 const users = { 
   "1": {
     id: "42hb2E", 
-    email: "helen@email.com", 
-    password: "password"
+    email: "helen@gmail.com", 
+    password: "zzzz"
   },
  "2": {
     id: "9sDexK", 
-    email: "melon@example.com", 
-    password: "internet"
+    email: "melon@gmail.com", 
+    password: "aaaa"
   }
 };
 
@@ -78,16 +78,25 @@ const getUserObjByEmail = (email) => {
   }
 };
 
+const getUrlsById = (id) => {
+  const urls = {};
+  for (const url in urlDatabase) {
+    if (urlDatabase[url]['userId'] === id) urls[url] = urlDatabase[url];
+  }
+  return urls;
+};
+
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-// browse home page
+// browse urls that I created
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
+  const urls = getUrlsById(userId);
   const templateVars = { 
-    urls: urlDatabase,
+    urls,
     user
   };
   if (user === undefined) {
