@@ -11,24 +11,21 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
-    </div>
-
-    <div>
-      <% if (user === undefined) { %>
-        <div class="btn-group" role="group" aria-label="Basic example">
+      <div class="navbar-nav ml-auto">
+        <% if (user === undefined) { %>
           <form method="GET" action="/login">
-            <button class="btn btn-dark" type="submit" style="margin: 0 1em">Login</button>
+            <a class="nav-item nav-link" href="/login">Login</a>
           </form>
           <form method="GET" action="/register">
-            <button class="btn btn-primary" type="submit">Register</button>
+            <a class="nav-item nav-link" href="/register">Register</a>
           </form>
-        </div>
-      <% } else { %>
-        <form method="POST" action="/logout">
-          <label style="margin: 0 1em">Logged In As: <%= user.email %></label>
-          <button class="btn btn-outline-dark" type="submit">Logout</button>
-        </form>
-      <% } %>
+        <% } else { %>
+          <form method="POST" action="/logout">
+            <label>Logged In As: <%= user.email %></label>
+            <button class="btn btn-outline-dark" type="submit">Logout</button>
+          </form>
+        <% } %>
+      </div>
     </div>
 
   </nav>
