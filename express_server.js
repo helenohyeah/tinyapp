@@ -45,7 +45,7 @@ const getNextNum = (num) => {
   return num;
 };
 
-const getUserObj = (userId) => {
+const getUserObjById = (userId) => {
   for (const user in users) {
     if (users[user]['id'] === userId) return users[user];
   }
@@ -56,7 +56,21 @@ const lookupEmail = (email) => {
     if (users[user]['email'] === email) return true;
   }
   return false;
-}
+};
+
+const verifyPassword = (email, password) => {
+  let userObj = {};
+  for (const user in users) {
+    if (users[user]['email'] === email) userObj = users[user];
+  }
+  return (userObj['password'] === password) ? true : false;
+};
+
+const getUserObjByEmail = (email) => {
+  for (const user in users) {
+    if (users[user]['email'] === email) return users[user];
+  }
+};
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -65,7 +79,7 @@ app.get("/", (req, res) => {
 // browse home page
 app.get("/urls", (req, res) => {
   const userId = req.cookies['username'];
-  const user = getUserObj(userId);
+  const user = getUserObjById(userId);
   const templateVars = { 
     urls: urlDatabase,
     user
@@ -76,7 +90,7 @@ app.get("/urls", (req, res) => {
 // browse create a new url page
 app.get('/urls/new', (req, res) => {
   const userId = req.cookies['username'];
-  const user = getUserObj(userId);
+  const user = getUserObjById(userId);
   const templateVars = {
     user
   }
@@ -88,7 +102,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
   const userId = req.cookies['username'];
-  const user = getUserObj(userId);
+  const user = getUserObjById(userId);
   const templateVars = {
     shortURL,
     longURL,
@@ -107,7 +121,7 @@ app.get('/u/:shortURL', (req, res) => {
 // browse and render register page
 app.get('/register', (req, res) => {
   const userId = req.cookies['username'];
-  const user = getUserObj(userId);
+  const user = getUserObjById(userId);
   const templateVars = {
     user
   }
@@ -116,7 +130,7 @@ app.get('/register', (req, res) => {
 
 app.get('/login', (req, res) => {
   const userId = req.cookies['username'];
-  const user = getUserObj(userId);
+  const user = getUserObjById(userId);
   const templateVars = {
     user
   }
@@ -128,10 +142,28 @@ app.get('*', (req, res) => {
   res.status(404).send('404 Not Found :(');
 });
 
+// login using email and password and sets a cookie
+// handles invalid email and password cases
 app.post('/login', (req, res) => {
-  const value = req.body['username'];
-  res.cookie('username', value);
-  res.redirect('/urls');
+  const email = req.body['email'];
+  const password = req.body['password'];
+
+  if (!lookupEmail(email)) {
+    res.status(403).send('Oh no, email not found!');
+    return;
+  } else if (!verifyPassword(email, password)) {
+    res.status(403).send('Oops, password doesn\'t match our records');
+    return;
+  } else {
+    const user = getUserObjByEmail(email);
+    res.cookie('username', user['id']);
+    res.redirect('/urls');
+  }
+  // sets cookie using userid
+  
+  // const value = req.body['username'];
+  // res.cookie('username', value);
+  // res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
@@ -152,7 +184,6 @@ app.post('/register', (req, res) => {
     res.status(400).send('Oops email already exists!');
     return;
   }
-console.log(users);
   users[num] = {
     id,
     email,
@@ -160,7 +191,7 @@ console.log(users);
   };
   res.cookie('username', id);
   res.redirect('/urls');
-})
+});
 
 // takes in new url forms and redirects to show new short and long URL
 app.post('/urls', (req, res) => {
