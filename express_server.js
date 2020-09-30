@@ -72,7 +72,7 @@ const getUserObjByEmail = (email) => {
   }
 };
 
-const getUrlsById = (id) => {
+const getUrlsForUser = (id) => {
   const urls = {};
   for (const url in urlDatabase) {
     if (urlDatabase[url]['userId'] === id) urls[url] = urlDatabase[url];
@@ -88,15 +88,12 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
-  const urls = getUrlsById(userId);
+  const urls = getUrlsForUser(userId);
   const templateVars = { 
     urls,
-    user
+    user,
   };
-  if (user === undefined) {
-    res.redirect('/login');
-    return;
-  }
+  (user === undefined) ? templateVars['loggedIn'] = false : templateVars['loggedIn'] = true;
   res.render('urls_index', templateVars);
 });
 
