@@ -70,6 +70,12 @@ const verifyPassword = (email, password) => {
   return (userObj['password'] === password) ? true : false;
 };
 
+const getHashedPasswordByEmail = (email) => {
+  for (const user in users) {
+    if (users[user]['email'] === email) return users[user]['password'];
+  }
+};
+
 const getUserObjByEmail = (email) => {
   for (const user in users) {
     if (users[user]['email'] === email) return users[user];
@@ -182,13 +188,14 @@ app.get('*', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = req.body['password'];
+  const hashedPassword = getHashedPasswordByEmail(email);
 
   // invalid email
   if (!lookupEmail(email)) {
     res.status(403).send('Oh no, email not found.');
     return;
   // invalid password
-  } else if (!verifyPassword(email, password)) {
+  } else if (!bcrypt.compareSync(password, hashedPassword)) {
     res.status(403).send('Oh no, password doesn\'t match our records.');
     return;
   } else {
