@@ -239,6 +239,7 @@ app.post('/urls', (req, res) => {
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = getUserIdByShortURL(shortURL);
+  // logged in
   if (userId === req.cookies['user_id']) {
     const shortURL = req.params.shortURL;
     delete urlDatabase[shortURL];
@@ -251,9 +252,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 // updates the longURL of a given shortURL
 app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = req.body['id'];
-  urlDatabase[shortURL]['longURL'] = longURL;
-  res.redirect(`/urls/${shortURL}`);
+  const userId = getUserIdByShortURL(shortURL);
+  // logged in
+  if (userId === req.cookies['user_id']) {
+    const longURL = req.body['id'];
+    urlDatabase[shortURL]['longURL'] = longURL;
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.status(401).send('Sorry, you must be logged in to edit this URL.');
+  }
 });
 
 app.listen(PORT, () => {
