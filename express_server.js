@@ -87,12 +87,16 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-// browse create a new url page
+// browse create a new url page only if user is logged in
 app.get('/urls/new', (req, res) => {
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
+  }
+  if (user === undefined) {
+    res.redirect('/login');
+    return;
   }
   res.render('urls_new', templateVars);
 });
