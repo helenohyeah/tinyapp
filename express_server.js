@@ -93,6 +93,12 @@ const getUserIdByEmail = (email) => {
   }
 };
 
+const getUserByEmail = (email, db) => {
+  for (const user in db) {
+    if (db[user]['email'] === email) return db[user];
+  }
+};
+
 app.get("/", (req, res) => {
   const userId = req.session['user_id'];
   if (userId === undefined) {
@@ -190,7 +196,8 @@ app.get('*', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = req.body['password'];
-  const hashedPassword = getHashedPasswordByEmail(email);
+  const user = getUserByEmail(email, users);
+  const hashedPassword = user['password'];
   
   // invalid email
   if (!lookupEmail(email)) {
@@ -201,7 +208,7 @@ app.post('/login', (req, res) => {
     res.status(403).send('Oh no, password doesn\'t match our records.');
     return;
   } else {
-    const id = getUserIdByEmail(email);
+    const id = user['id'];
     req.session['user_id'] = id;
     res.redirect('/urls');
   }
@@ -237,7 +244,6 @@ app.post('/register', (req, res) => {
     email,
     password: hashedPassword
   };
-  console.log(id);
   req.session['user_id'] = id;
   res.redirect('/urls');
 });
