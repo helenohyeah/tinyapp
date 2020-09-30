@@ -1,7 +1,6 @@
 // Packages
 const express = require("express");
 const bodyParser = require("body-parser");
-// const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
@@ -15,7 +14,6 @@ app.set("view engine", "ejs");
 
 // Middleware
 app.use(bodyParser.urlencoded({extended: true}));
-// app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2']
@@ -83,12 +81,6 @@ const getUserIdByShortURL = (shortURL) => {
     if (url === shortURL) return urlDatabase[url]['userId'];
   }
 };
-
-// const getUserByEmail = (email, db) => {
-//   for (const user in db) {
-//     if (db[user]['email'] === email) return db[user];
-//   }
-// };
 
 app.get("/", (req, res) => {
   const userId = req.session['user_id'];
