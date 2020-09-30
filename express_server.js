@@ -10,11 +10,17 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // hardcoded url data
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com",
+//   "43hb2E": "http://www.spotify.com"
+// };
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  "43hb2E": "http://www.spotify.com"
-};
+  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E' },
+  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E' },
+  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK' }
+}
 
 // hardcoded user data
 const users = { 
@@ -104,7 +110,7 @@ app.get('/urls/new', (req, res) => {
 // browse individual short url page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL]['longURL'];
   const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
@@ -118,7 +124,7 @@ app.get('/urls/:shortURL', (req, res) => {
 // redirector that takes the short url and sends user to the matching longURL
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL]['longURL'];
   res.redirect(longURL || '/*');
 });
 
@@ -201,7 +207,7 @@ app.post('/register', (req, res) => {
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body['longURL'];
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL]['longURL'] = longURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -216,7 +222,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body['id'];
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL]['longURL'] = longURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
