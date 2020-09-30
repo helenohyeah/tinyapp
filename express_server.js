@@ -123,10 +123,7 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL,
     user
   };
-  if (user === undefined) {
-    res.redirect('/login');
-    return;
-  }
+  (user === undefined) ? templateVars['loggedIn'] = false : templateVars['loggedIn'] = true;
   res.render('urls_show', templateVars);
 });
 
