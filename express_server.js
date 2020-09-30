@@ -1,7 +1,8 @@
 // Packages
 const express = require("express");
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 // Server set-up
@@ -11,7 +12,11 @@ app.set("view engine", "ejs");
 
 // Middleware
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2']
+}));
 
 // hardcoded url data
 const urlDatabase = {
@@ -96,10 +101,16 @@ const getUserIdByShortURL = (shortURL) => {
   }
 };
 
+const getUserIdByEmail = (email) => {
+  for (const url in urlDatabase) {
+    if (urlDatabase[url]['email'] === email) return urlDatabase[url]['userId'];
+  }
+};
+
 app.get("/", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   if (userId === undefined) {
-    res.redirect('/login');
+    res.status(401).redirect('/login');
   } else {
     res.redirect('/urls');
   }
@@ -107,7 +118,7 @@ app.get("/", (req, res) => {
 
 // browse urls that the user created only if user is logged in
 app.get("/urls", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   const user = getUserObjById(userId);
   const urls = getUrlsForUser(userId);
   const templateVars = {
@@ -120,7 +131,7 @@ app.get("/urls", (req, res) => {
 
 // browse create a new url page only if user is logged in
 app.get('/urls/new', (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
@@ -140,7 +151,7 @@ app.get('/urls/:shortURL', (req, res) => {
     return;
   }
   const longURL = urlDatabase[shortURL]['longURL'];
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     shortURL,
@@ -166,7 +177,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 // render register page
 app.get('/register', (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
@@ -176,7 +187,7 @@ app.get('/register', (req, res) => {
 
 // render login page
 app.get('/login', (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
@@ -194,6 +205,7 @@ app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = req.body['password'];
   const hashedPassword = getHashedPasswordByEmail(email);
+  const id = getUserIdByEmail(email);
 
   // invalid email
   if (!lookupEmail(email)) {
@@ -205,14 +217,14 @@ app.post('/login', (req, res) => {
     return;
   } else {
     const user = getUserObjByEmail(email);
-    res.cookie('user_id', user['id']);
+    req.session.user_id = id;
     res.redirect('/urls');
   }
 });
 
 // logout and clear cookies
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  res.clearCookie('session');
   res.redirect('urls');
 });
 
@@ -240,7 +252,7 @@ app.post('/register', (req, res) => {
     email,
     password: hashedPassword
   };
-  res.cookie('user_id', id);
+  req.session.user_id = id;
   res.redirect('/urls');
 });
 
@@ -248,7 +260,7 @@ app.post('/register', (req, res) => {
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body['longURL'];
-  const userId = req.cookies['user_id'];
+  const userId = req.session['user_id'];
   urlDatabase[shortURL] = {
     longURL,
     userId
@@ -261,7 +273,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = getUserIdByShortURL(shortURL);
   // logged in
-  if (userId === req.cookies['user_id']) {
+  if (userId === req.session['user_id']) {
     const shortURL = req.params.shortURL;
     delete urlDatabase[shortURL];
     res.redirect('/urls');
@@ -275,7 +287,7 @@ app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = getUserIdByShortURL(shortURL);
   // logged in
-  if (userId === req.cookies['user_id']) {
+  if (userId === req.session['user_id']) {
     const longURL = req.body['id'];
     urlDatabase[shortURL]['longURL'] = longURL;
     res.redirect(`/urls/${shortURL}`);
