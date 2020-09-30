@@ -90,6 +90,10 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     user
   };
+  if (user === undefined) {
+    res.redirect('/login');
+    return;
+  }
   res.render('urls_index', templateVars);
 });
 
@@ -107,7 +111,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
-// browse individual short url page
+// get individual short url page and allow user to edit
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL]['longURL'];
@@ -118,6 +122,10 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL,
     user
   };
+  if (user === undefined) {
+    res.redirect('/login');
+    return;
+  }
   res.render('urls_show', templateVars);
 });
 
