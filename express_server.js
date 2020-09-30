@@ -179,14 +179,15 @@ app.get('*', (req, res) => {
 });
 
 // login using email and password and sets a cookie
-// handles invalid email and password cases
 app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = req.body['password'];
 
+  // invalid email
   if (!lookupEmail(email)) {
     res.status(403).send('Oh no, email not found.');
     return;
+  // invalid password
   } else if (!verifyPassword(email, password)) {
     res.status(403).send('Oh no, password doesn\'t match our records.');
     return;
@@ -204,16 +205,20 @@ app.post('/logout', (req, res) => {
 });
 
 // register with email and password
-// handles empty email or password, email already exists
 app.post('/register', (req, res) => {
   const num = getNextNum(Math.max(...Object.keys(users)));
   const id = generateRandomString();
   const email = req.body['email'];
-  const password = req.body['password'];
 
+  // securing password
+  const password = req.body['password'];
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  // empty email or password
   if (email === '' || password === '') {
     res.status(400).send('Oh no, empty email and/or password.');
     return;
+  // email already exists
   } else if (lookupEmail(email)) {
     res.status(400).send('Oops, that email already exists.');
     return;
@@ -221,7 +226,7 @@ app.post('/register', (req, res) => {
   users[num] = {
     id,
     email,
-    password
+    password: hashedPassword
   };
   res.cookie('user_id', id);
   res.redirect('/urls');
