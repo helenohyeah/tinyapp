@@ -78,7 +78,7 @@ app.get("/", (req, res) => {
 
 // browse home page
 app.get("/urls", (req, res) => {
-  const userId = req.cookies['username'];
+  const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = { 
     urls: urlDatabase,
@@ -89,7 +89,7 @@ app.get("/urls", (req, res) => {
 
 // browse create a new url page
 app.get('/urls/new', (req, res) => {
-  const userId = req.cookies['username'];
+  const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
@@ -101,7 +101,7 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
-  const userId = req.cookies['username'];
+  const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     shortURL,
@@ -120,7 +120,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 // browse and render register page
 app.get('/register', (req, res) => {
-  const userId = req.cookies['username'];
+  const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
@@ -129,7 +129,7 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const userId = req.cookies['username'];
+  const userId = req.cookies['user_id'];
   const user = getUserObjById(userId);
   const templateVars = {
     user
@@ -156,7 +156,7 @@ app.post('/login', (req, res) => {
     return;
   } else {
     const user = getUserObjByEmail(email);
-    res.cookie('username', user['id']);
+    res.cookie('user_id', user['id']);
     res.redirect('/urls');
   }
   // sets cookie using userid
@@ -167,7 +167,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('urls');
 });
 
@@ -189,7 +189,7 @@ app.post('/register', (req, res) => {
     email,
     password
   };
-  res.cookie('username', id);
+  res.cookie('user_id', id);
   res.redirect('/urls');
 });
 
