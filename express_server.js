@@ -115,6 +115,11 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  const userId = req.cookies['username'];
+  const user = getUserObj(userId);
+  const templateVars = {
+    user
+  }
   res.render('login', templateVars);
 });
 
