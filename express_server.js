@@ -80,6 +80,12 @@ const getUrlsForUser = (id) => {
   return urls;
 };
 
+const getUserIdByShortURL = (shortURL) => {;
+  for (const url in urlDatabase) {
+    if (url === shortURL) return urlDatabase[url]['userId'];
+  }
+};
+
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
@@ -232,8 +238,14 @@ app.post('/urls', (req, res) => {
 // deletes a shortURL given the shortURL to delete then redirects to home
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect('/urls');
+  const userId = getUserIdByShortURL(shortURL);
+  if (userId === req.cookies['user_id']) {
+    const shortURL = req.params.shortURL;
+    delete urlDatabase[shortURL];
+    res.redirect('/urls');
+  } else {
+    res.status(401).send('Sorry, you must be logged in to delete this URL.');
+  }
 });
 
 // updates the longURL of a given shortURL
