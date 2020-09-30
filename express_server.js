@@ -1,13 +1,17 @@
+// Packages
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
+// Server set-up
 const app = express();
 const PORT = 8080; // default port 8080
+app.set("view engine", "ejs");
 
+// Middleware
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-app.set("view engine", "ejs");
 
 // hardcoded url data
 const urlDatabase = {
