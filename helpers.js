@@ -45,7 +45,7 @@ const getNextNum = (num) => {
   return num;
 };
 
-module.exports = { 
+module.exports = {
   generateRandomString,
   getUserByEmail,
   getUserById,

@@ -223,12 +223,12 @@ app.post('/login', (req, res) => {
         res.redirect('urls');
       // invalid password
       } else {
-        res.status(401).send('Incorrect email and/or password. Please try again.')
+        res.status(401).send('Incorrect email and/or password. Please try again.');
       }
     });
   // invalid email
   } else {
-    res.status(401).send('Incorrect email and/or password. Please try again.')
+    res.status(401).send('Incorrect email and/or password. Please try again.');
   }
 });
 
@@ -260,17 +260,17 @@ app.post('/register', (req, res) => {
   }
 });
 
-// logout and clear cookies
+// logout and clear cookie
 app.post('/logout', (req, res) => {
   req.session = null;
-  res.redirect('urls');
+  res.redirect('/urls');
 });
 
 // catch all
 app.get('*', (req, res) => {
-  res.status(404).send('404 Not Found :(');
+  res.status(404).send('Page not found :(');
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`App listening on port ${PORT}!`);
 });

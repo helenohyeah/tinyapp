@@ -12,6 +12,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <div class="navbar-nav ml-auto">
+        
         <% if (!user) { %>
           <form method="GET" action="/login">
             <a class="nav-item nav-link" href="/login">Login</a>
@@ -19,6 +20,7 @@
           <form method="GET" action="/register">
             <a class="nav-item nav-link" href="/register">Register</a>
           </form>
+
         <% } else { %>
           <form method="POST" action="/logout">
             <label>Logged In As: <%= user.email %></label>
