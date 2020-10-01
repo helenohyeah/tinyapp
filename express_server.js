@@ -5,7 +5,11 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 // Helpers
-const { getUserByEmail, generateRandomString } = require('./helpers');
+const { 
+  getUserByEmail,
+  generateRandomString,
+  getUserById
+} = require('./helpers');
 
 // Server set-up
 const app = express();
@@ -45,12 +49,6 @@ const getNextNum = (num) => {
   return num;
 };
 
-const getUserObjById = (userId) => {
-  for (const user in users) {
-    if (users[user]['id'] === userId) return users[user];
-  }
-};
-
 const lookupEmail = (email) => {
   for (const user in users) {
     if (users[user]['email'] === email) return true;
@@ -86,7 +84,7 @@ app.get("/", (req, res) => {
 // browse urls that the user created only if user is logged in
 app.get("/urls", (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserObjById(userId);
+  const user = getUserById(userId, users);
   const urls = getUrlsForUser(userId);
   const templateVars = {
     urls,
@@ -98,7 +96,7 @@ app.get("/urls", (req, res) => {
 // browse create a new url page only if user is logged in
 app.get('/urls/new', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserObjById(userId);
+  const user = getUserById(userId, users);
   const templateVars = {
     user
   };
@@ -118,7 +116,7 @@ app.get('/urls/:shortURL', (req, res) => {
   }
   const longURL = urlDatabase[shortURL]['longURL'];
   const userId = req.session['user_id'];
-  const user = getUserObjById(userId);
+  const user = getUserById(userId, users);
   const templateVars = {
     shortURL,
     longURL,
@@ -144,7 +142,7 @@ app.get('/u/:shortURL', (req, res) => {
 // render register page
 app.get('/register', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserObjById(userId);
+  const user = getUserById(userId, users);
   const templateVars = {
     user
   };
@@ -154,7 +152,7 @@ app.get('/register', (req, res) => {
 // render login page
 app.get('/login', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserObjById(userId);
+  const user = getUserById(userId, users);
   const templateVars = {
     user
   };
