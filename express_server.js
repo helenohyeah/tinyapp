@@ -193,32 +193,30 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
 });
 
+// Login and Registration endpoints
 
-
-
-
-
-
-
-
-// render register page
-app.get('/register', (req, res) => {
-  const userId = req.session['user_id'];
-  const user = getUserById(userId, userDatabase);
-  const templateVars = {
-    user
-  };
-  res.render('register', templateVars);
-});
-
-// render login page
+// browse login page
 app.get('/login', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserById(userId, userDatabase);
+  // redirect if logged in
+  if (userId) res.redirect('/urls');
+
   const templateVars = {
-    user
+    user: undefined
   };
   res.render('login', templateVars);
+});
+
+// browse registration page
+app.get('/register', (req, res) => {
+  const userId = req.session['user_id'];
+  // redirect if logged in
+  if (userId) res.redirect('/urls');
+  
+  const templateVars = {
+    user: undefined
+  };
+  res.render('register', templateVars);
 });
 
 // catch all
