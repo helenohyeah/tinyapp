@@ -13,10 +13,10 @@ const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 
 // Middleware
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
-  keys: ['key1', 'key2']
+  keys: ['averylongsecretkey', 'anotherverylongsecretkey']
 }));
 
 // hardcoded url data
@@ -28,15 +28,15 @@ const urlDatabase = {
 
 // hardcoded user data
 const users = {
-  "1": {
-    id: "42hb2E",
-    email: "helen@gmail.com",
-    password: "zzzz"
+  '1': {
+    id: '42hb2E',
+    email: 'helen@gmail.com',
+    password: bcrypt.hashSync('hhhh', 5)
   },
-  "2": {
-    id: "9sDexK",
-    email: "melon@gmail.com",
-    password: "aaaa"
+  '2': {
+    id: '9sDexK',
+    email: 'melon@gmail.com',
+    password: bcrypt.hashSync('mmmm', 5)
   }
 };
 
