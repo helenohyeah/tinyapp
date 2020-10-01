@@ -169,7 +169,7 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 // deletes a shortURL given a shortURL
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.delete('/urls/:shortURL/delete', (req, res) => {
   const userId = req.session['user_id'];
   const { shortURL} = req.params;
   // user logged in and owns the short url
