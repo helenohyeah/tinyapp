@@ -12,7 +12,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <div class="navbar-nav ml-auto">
-        <% if (user === undefined) { %>
+        <% if (!user) { %>
           <form method="GET" action="/login">
             <a class="nav-item nav-link" href="/login">Login</a>
           </form>

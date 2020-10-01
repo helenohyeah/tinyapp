@@ -18,7 +18,7 @@
   
   <main style="margin: 1em;">
 
-    <% if (!loggedIn) { %>
+    <% if (!user) { %>
       <div class="alert alert-danger" role="alert">
         Sorry, you must be logged in to see your URLs. <a href="/login" class="alert-link">Login here.</a>
       </div>

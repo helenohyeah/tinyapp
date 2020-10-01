@@ -5,7 +5,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 // Helpers
-const { getUserByEmail } = require('./helpers');
+const { getUserByEmail, generateRandomString } = require('./helpers');
 
 // Server set-up
 const app = express();
@@ -38,16 +38,6 @@ const users = {
     email: 'melon@gmail.com',
     password: bcrypt.hashSync('mmmm', 5)
   }
-};
-
-// generates a 6 character alphanumeric string for shortURL
-const generateRandomString = () => {
-  let str = '';
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 6; i++) {
-    str += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return str;
 };
 
 const getNextNum = (num) => {
@@ -84,8 +74,10 @@ const getUserIdByShortURL = (shortURL) => {
 
 app.get("/", (req, res) => {
   const userId = req.session['user_id'];
+  // user is not logged in
   if (userId === undefined) {
     res.status(401).redirect('/login');
+  // user is logged in
   } else {
     res.redirect('/urls');
   }
@@ -98,9 +90,8 @@ app.get("/urls", (req, res) => {
   const urls = getUrlsForUser(userId);
   const templateVars = {
     urls,
-    user,
+    user
   };
-  (user === undefined) ? templateVars['loggedIn'] = false : templateVars['loggedIn'] = true;
   res.render('urls_index', templateVars);
 });
 
