@@ -39,10 +39,17 @@ const lookupEmail = (email, db) => {
   return false;
 };
 
+// returns the next number for user db
+const getNextNum = (num) => {
+  num++;
+  return num;
+};
+
 module.exports = { 
   generateRandomString,
   getUserByEmail,
   getUserById,
   getUrlsForUser,
-  lookupEmail
+  lookupEmail,
+  getNextNum
 };

@@ -10,7 +10,8 @@ const {
   getUserByEmail,
   getUserById,
   getUrlsForUser,
-  lookupEmail
+  lookupEmail,
+  getNextNum
 } = require('./helpers');
 
 // Server set-up
@@ -44,11 +45,6 @@ const userDatabase = {
     email: 'melon@gmail.com',
     password: bcrypt.hashSync('mmmm', 5)
   }
-};
-
-const getNextNum = (num) => {
-  num++;
-  return num;
 };
 
 // URL endpoints
@@ -236,38 +232,38 @@ app.post('/login', (req, res) => {
   }
 });
 
+// register with email and password
+app.post('/register', (req, res) => {
+  const { email, password } = req.body;
+
+  // empty email and/or password
+  if (!email || !password) {
+    res.status(400).send('Missing email and/or password. Please try again.');
+  // email already exists
+  } else if (lookupEmail(email, userDatabase)) {
+    res.status(400).send('That email already exists.');
+  // valid email and password
+  } else {
+    bcrypt.hash(password, 5, (err, hashedPassword) => {
+      const num = getNextNum(Math.max(...Object.keys(userDatabase)));
+      const id = generateRandomString();
+      // add user to database
+      userDatabase[num] = {
+        id,
+        email,
+        password: hashedPassword
+      };
+      // set a cookie
+      req.session['user_id'] = id;
+      res.redirect('/urls');
+    });
+  }
+});
+
 // logout and clear cookies
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('urls');
-});
-
-// register with email and password
-app.post('/register', (req, res) => {
-  const num = getNextNum(Math.max(...Object.keys(userDatabase)));
-  const id = generateRandomString();
-  const email = req.body['email'];
-
-  // securing password
-  const password = req.body['password'];
-  const hashedPassword = bcrypt.hashSync(password, 10);
-
-  // empty email or password
-  if (email === '' || password === '') {
-    res.status(400).send('Oh no, empty email and/or password.');
-    return;
-  // email already exists
-  } else if (lookupEmail(email)) {
-    res.status(400).send('Oops, that email already exists.');
-    return;
-  }
-  userDatabase[num] = {
-    id,
-    email,
-    password: hashedPassword
-  };
-  req.session['user_id'] = id;
-  res.redirect('/urls');
 });
 
 // catch all
