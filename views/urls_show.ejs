@@ -14,9 +14,9 @@
 
   <main style="margin: 1em;">
 
-    <% if (!user) { %>
+    <% if (!user || !access) { %>
       <div class="alert alert-danger" role="alert">
-        Sorry, you must be logged in to see this URLs. <a href="/login" class="alert-link">Login here.</a>
+        Sorry, you don't have access to edit this TinyURL. <a href="/login" class="alert-link">Login here.</a>
       </div>
     <% } else { %>
       <div class="card text-center">

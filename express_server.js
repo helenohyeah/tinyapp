@@ -104,29 +104,29 @@ app.get('/urls/new', (req, res) => {
   }
 });
 
-// browse individual short url page and allow user to edit only if user is logged in
+// browse specific short url page
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (!Object.keys(urlDatabase).includes(shortURL)) {
-    res.redirect('/*');
-    return;
-  }
-  const longURL = urlDatabase[shortURL]['longURL'];
-  const userId = req.session['user_id'];
-  const user = getUserById(userId, userDatabase);
-  const templateVars = {
-    shortURL,
-    longURL,
-    user
-  };
-  if (user === undefined) {
-    templateVars['loggedIn'] = false;
-  } else if (urlDatabase[shortURL]['userId'] !== userId) {
-    templateVars['loggedIn'] = false;
+  // valid short url
+  if (shortURL in urlDatabase) {
+    const longURL = urlDatabase[shortURL]['longURL'];
+    const userId = req.session['user_id'];
+    const user = getUserById(userId, userDatabase);
+    const templateVars = {
+      shortURL,
+      longURL,
+      user,
+      access: false
+    };
+    // check if user has access to short url
+    if (urlDatabase[shortURL]['userId'] === userId) {
+      templateVars['access'] = true;
+    }
+    res.render('urls_show', templateVars);
+  // invalid short url
   } else {
-    templateVars['loggedIn'] = true;
+    res.status(404).send(`TinyURL ${shortURL} doesn't exist!`);
   }
-  res.render('urls_show', templateVars);
 });
 
 // redirector that sends user to a longURL given a shortURL
