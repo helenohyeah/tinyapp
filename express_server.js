@@ -9,7 +9,8 @@ const {
   generateRandomString,
   getUserByEmail,
   getUserById,
-  getUrlsForUser
+  getUrlsForUser,
+  lookupEmail
 } = require('./helpers');
 
 // Server set-up
@@ -48,13 +49,6 @@ const userDatabase = {
 const getNextNum = (num) => {
   num++;
   return num;
-};
-
-const lookupEmail = (email) => {
-  for (const user in userDatabase) {
-    if (userDatabase[user]['email'] === email) return true;
-  }
-  return false;
 };
 
 // URL endpoints
@@ -219,30 +213,26 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
-// catch all
-app.get('*', (req, res) => {
-  res.status(404).send('404 Not Found :(');
-});
-
-// login using email and password and sets a cookie
+// login with email and password
 app.post('/login', (req, res) => {
-  const email = req.body['email'];
-  const password = req.body['password'];
+  const { email, password } = req.body;
   const user = getUserByEmail(email, userDatabase);
-  const hashedPassword = user['password'];
-  
+  // valid email
+  if (user) {
+    bcrypt.compare(password, user['password'], (err, verifyPassword) => {
+      // valid password
+      if (verifyPassword) {
+        // set a cookie
+        req.session['user_id'] = user['id'];
+        res.redirect('urls');
+      // invalid password
+      } else {
+        res.status(401).send('Incorrect email and/or password. Please try again.')
+      }
+    });
   // invalid email
-  if (!lookupEmail(email)) {
-    res.status(403).send('Oh no, email not found.');
-    return;
-  // invalid password
-  } else if (!bcrypt.compareSync(password, hashedPassword)) {
-    res.status(403).send('Oh no, password doesn\'t match our records.');
-    return;
   } else {
-    const id = user['id'];
-    req.session['user_id'] = id;
-    res.redirect('/urls');
+    res.status(401).send('Incorrect email and/or password. Please try again.')
   }
 });
 
@@ -280,7 +270,10 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
-
+// catch all
+app.get('*', (req, res) => {
+  res.status(404).send('404 Not Found :(');
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

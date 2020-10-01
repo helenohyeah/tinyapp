@@ -31,9 +31,18 @@ const getUrlsForUser = (id, db) => {
   return urls;
 };
 
+// returns true if email is found in db
+const lookupEmail = (email, db) => {
+  for (const user in db) {
+    if (db[user]['email'] === email) return true;
+  }
+  return false;
+};
+
 module.exports = { 
   generateRandomString,
   getUserByEmail,
   getUserById,
-  getUrlsForUser
+  getUrlsForUser,
+  lookupEmail
 };
