@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 
 // Helpers
 const {
@@ -25,6 +26,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['averylongsecretkey', 'anotherverylongsecretkey']
 }));
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 // hardcoded url data
 const urlDatabase = {
