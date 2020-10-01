@@ -6,8 +6,8 @@ const bcrypt = require('bcrypt');
 
 // Helpers
 const {
-  getUserByEmail,
   generateRandomString,
+  getUserByEmail,
   getUserById,
   getUrlsForUser
 } = require('./helpers');
@@ -57,11 +57,7 @@ const lookupEmail = (email) => {
   return false;
 };
 
-const getUserIdByShortURL = (shortURL) => {
-  for (const url in urlDatabase) {
-    if (url === shortURL) return urlDatabase[url]['userId'];
-  }
-};
+// URL endpoints
 
 // root path redirector
 app.get("/", (req, res) => {
@@ -76,7 +72,7 @@ app.get("/", (req, res) => {
 });
 
 // browse urls that the user created
-// ejs handles not logged in state
+// html handles not logged in state
 app.get("/urls", (req, res) => {
   const userId = req.session['user_id'];
   const user = getUserById(userId, userDatabase);
@@ -105,6 +101,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 // browse specific short url page
+// html handles not logged in state
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   // valid short url
@@ -125,7 +122,7 @@ app.get('/urls/:shortURL', (req, res) => {
     res.render('urls_show', templateVars);
   // invalid short url
   } else {
-    res.status(404).send(`TinyURL ${shortURL} doesn't exist :(`);
+    res.status(404).send(`Sorry, TinyURL ${shortURL} doesn't exist :(`);
   }
 });
 
@@ -138,9 +135,71 @@ app.get('/u/:shortURL', (req, res) => {
     res.redirect(longURL);
   // invalid short url
   } else {
-    res.status(404).send(`TinyURL '${shortURL}' doesn't exist :(`)
+    res.status(404).send(`Sorry, TinyURL '${shortURL}' doesn't exist :(`);
   }
 });
+
+// create a new short url given a long url
+app.post('/urls', (req, res) => {
+  const userId = req.session['user_id'];
+  // logged in
+  if (userId) {
+    const shortURL = generateRandomString();
+    const { longURL } = req.body;
+    // adds short url to the db and associates it with the user
+    urlDatabase[shortURL] = {
+      longURL,
+      userId
+    };
+    res.redirect(`/urls/${shortURL}`);
+  // not logged in
+  } else {
+    res.status(401).send('Sorry, you must be logged in to create a Tiny URL.');
+  }
+});
+
+// updates the long url of a given short url
+app.post('/urls/:shortURL', (req, res) => {
+  const userId = req.session['user_id'];
+  const { shortURL } = req.params;
+  // user logged in and owns the short url
+  if (userId === urlDatabase[shortURL]['userId']) {
+    const { longURL } = req.body;
+    urlDatabase[shortURL]['longURL'] = longURL;
+    res.redirect(`/urls/${shortURL}`);
+  // user doesn't own the short url
+  } else if (userId !== urlDatabase[shortURL][userId]) {
+    res.status(401).send('Sorry, you don\'t have access to this Tiny URL.');
+  // not logged in
+  } else {
+    res.status(401).send('Sorry, you must be logged in to edit a Tiny URL.');
+  }
+});
+
+// deletes a shortURL given a shortURL
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const userId = req.session['user_id'];
+  const { shortURL} = req.params;
+  // user logged in and owns the short url
+  if (userId === urlDatabase[shortURL]['userId']) {
+    delete urlDatabase[shortURL];
+    res.redirect('/urls');
+  // user doesn't own the short url
+  } else if (userId !== urlDatabase[shortURL][userId]) {
+    res.status(401).send('Sorry, you don\'t have access to this Tiny URL.');
+  // not logged in
+  } else {
+    res.status(401).send('Sorry, you must be logged in to delete a Tiny URL.');
+  }
+});
+
+
+
+
+
+
+
+
 
 // render register page
 app.get('/register', (req, res) => {
@@ -223,45 +282,7 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
-// creates a new shortURL given a longURL
-app.post('/urls', (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body['longURL'];
-  const userId = req.session['user_id'];
-  urlDatabase[shortURL] = {
-    longURL,
-    userId
-  };
-  res.redirect(`/urls/${shortURL}`);
-});
 
-// deletes a shortURL given the shortURL to delete then redirects to home
-app.post('/urls/:shortURL/delete', (req, res) => {
-  const shortURL = req.params.shortURL;
-  const userId = getUserIdByShortURL(shortURL);
-  // logged in
-  if (userId === req.session['user_id']) {
-    const shortURL = req.params.shortURL;
-    delete urlDatabase[shortURL];
-    res.redirect('/urls');
-  } else {
-    res.status(401).send('Sorry, you must be logged in to delete this URL.');
-  }
-});
-
-// updates the longURL of a given shortURL
-app.post('/urls/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  const userId = getUserIdByShortURL(shortURL);
-  // logged in
-  if (userId === req.session['user_id']) {
-    const longURL = req.body['id'];
-    urlDatabase[shortURL]['longURL'] = longURL;
-    res.redirect(`/urls/${shortURL}`);
-  } else {
-    res.status(401).send('Sorry, you must be logged in to edit this URL.');
-  }
-});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
