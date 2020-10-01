@@ -8,7 +8,8 @@ const bcrypt = require('bcrypt');
 const { 
   getUserByEmail,
   generateRandomString,
-  getUserById
+  getUserById,
+  getUrlsForUser
 } = require('./helpers');
 
 // Server set-up
@@ -31,7 +32,7 @@ const urlDatabase = {
 };
 
 // hardcoded user data
-const users = {
+const userDatabase = {
   '1': {
     id: '42hb2E',
     email: 'helen@gmail.com',
@@ -50,18 +51,10 @@ const getNextNum = (num) => {
 };
 
 const lookupEmail = (email) => {
-  for (const user in users) {
-    if (users[user]['email'] === email) return true;
+  for (const user in userDatabase) {
+    if (userDatabase[user]['email'] === email) return true;
   }
   return false;
-};
-
-const getUrlsForUser = (id) => {
-  const urls = {};
-  for (const url in urlDatabase) {
-    if (urlDatabase[url]['userId'] === id) urls[url] = urlDatabase[url];
-  }
-  return urls;
 };
 
 const getUserIdByShortURL = (shortURL) => {
@@ -84,8 +77,8 @@ app.get("/", (req, res) => {
 // browse urls that the user created only if user is logged in
 app.get("/urls", (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserById(userId, users);
-  const urls = getUrlsForUser(userId);
+  const user = getUserById(userId, userDatabase);
+  const urls = getUrlsForUser(userId, urlDatabase);
   const templateVars = {
     urls,
     user
@@ -96,7 +89,7 @@ app.get("/urls", (req, res) => {
 // browse create a new url page only if user is logged in
 app.get('/urls/new', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserById(userId, users);
+  const user = getUserById(userId, userDatabase);
   const templateVars = {
     user
   };
@@ -116,7 +109,7 @@ app.get('/urls/:shortURL', (req, res) => {
   }
   const longURL = urlDatabase[shortURL]['longURL'];
   const userId = req.session['user_id'];
-  const user = getUserById(userId, users);
+  const user = getUserById(userId, userDatabase);
   const templateVars = {
     shortURL,
     longURL,
@@ -142,7 +135,7 @@ app.get('/u/:shortURL', (req, res) => {
 // render register page
 app.get('/register', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserById(userId, users);
+  const user = getUserById(userId, userDatabase);
   const templateVars = {
     user
   };
@@ -152,7 +145,7 @@ app.get('/register', (req, res) => {
 // render login page
 app.get('/login', (req, res) => {
   const userId = req.session['user_id'];
-  const user = getUserById(userId, users);
+  const user = getUserById(userId, userDatabase);
   const templateVars = {
     user
   };
@@ -168,7 +161,7 @@ app.get('*', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body['email'];
   const password = req.body['password'];
-  const user = getUserByEmail(email, users);
+  const user = getUserByEmail(email, userDatabase);
   const hashedPassword = user['password'];
   
   // invalid email
@@ -194,7 +187,7 @@ app.post('/logout', (req, res) => {
 
 // register with email and password
 app.post('/register', (req, res) => {
-  const num = getNextNum(Math.max(...Object.keys(users)));
+  const num = getNextNum(Math.max(...Object.keys(userDatabase)));
   const id = generateRandomString();
   const email = req.body['email'];
 
@@ -211,7 +204,7 @@ app.post('/register', (req, res) => {
     res.status(400).send('Oops, that email already exists.');
     return;
   }
-  users[num] = {
+  userDatabase[num] = {
     id,
     email,
     password: hashedPassword

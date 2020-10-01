@@ -22,8 +22,18 @@ const getUserById = (id, db) => {
   }
 };
 
+// returns a url object of all urls belonging to a given user
+const getUrlsForUser = (id, db) => {
+  const urls = {};
+  for (const url in db) {
+    if (db[url]['userId'] === id) urls[url] = db[url];
+  }
+  return urls;
+};
+
 module.exports = { 
   generateRandomString,
   getUserByEmail,
-  getUserById
+  getUserById,
+  getUrlsForUser
 };
