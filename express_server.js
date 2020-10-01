@@ -125,15 +125,21 @@ app.get('/urls/:shortURL', (req, res) => {
     res.render('urls_show', templateVars);
   // invalid short url
   } else {
-    res.status(404).send(`TinyURL ${shortURL} doesn't exist!`);
+    res.status(404).send(`TinyURL ${shortURL} doesn't exist :(`);
   }
 });
 
-// redirector that sends user to a longURL given a shortURL
+// redirects to long url given a short url
 app.get('/u/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL]['longURL'];
-  res.redirect(longURL || '/*');
+  const { shortURL } = req.params;
+  const { longURL } = urlDatabase[shortURL];
+  // valid short url
+  if (shortURL) {
+    res.redirect(longURL);
+  // invalid short url
+  } else {
+    res.status(404).send(`TinyURL '${shortURL}' doesn't exist :(`)
+  }
 });
 
 // render register page
