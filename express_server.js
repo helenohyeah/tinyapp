@@ -5,7 +5,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 // Helpers
-const { 
+const {
   getUserByEmail,
   generateRandomString,
   getUserById,
@@ -63,10 +63,11 @@ const getUserIdByShortURL = (shortURL) => {
   }
 };
 
+// root path redirector
 app.get("/", (req, res) => {
   const userId = req.session['user_id'];
   // user is not logged in
-  if (userId === undefined) {
+  if (!userId) {
     res.status(401).redirect('/login');
   // user is logged in
   } else {
@@ -74,7 +75,8 @@ app.get("/", (req, res) => {
   }
 });
 
-// browse urls that the user created only if user is logged in
+// browse urls that the user created
+// ejs handles not logged in state
 app.get("/urls", (req, res) => {
   const userId = req.session['user_id'];
   const user = getUserById(userId, userDatabase);
@@ -86,18 +88,20 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-// browse create a new url page only if user is logged in
+// browse create a new url page
 app.get('/urls/new', (req, res) => {
   const userId = req.session['user_id'];
   const user = getUserById(userId, userDatabase);
   const templateVars = {
     user
   };
-  if (user === undefined) {
+  // user is not logged in
+  if (!user) {
     res.redirect('/login');
-    return;
+  // user is logged in
+  } else {
+    res.render('urls_new', templateVars);
   }
-  res.render('urls_new', templateVars);
 });
 
 // browse individual short url page and allow user to edit only if user is logged in
