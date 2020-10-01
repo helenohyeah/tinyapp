@@ -26,7 +26,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['averylongsecretkey', 'anotherverylongsecretkey']
 }));
-app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('_method'));
 
 // hardcoded url data
 const urlDatabase = {
