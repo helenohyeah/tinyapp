@@ -30,9 +30,9 @@ app.use(methodOverride('_method'));
 
 // hardcoded url data
 const urlDatabase = {
-  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', clicks: 0, visits: {} },
-  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', clicks: 0, visits: {} },
-  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', clicks: 0, visits: {} }
+  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', clicks: 0, visits: [] },
+  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', clicks: 0, visits: [] },
+  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', clicks: 0, visits: [] }
 };
 
 // hardcoded user data
@@ -98,13 +98,13 @@ app.get('/urls/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   // valid short url
   if (shortURL in urlDatabase) {
-    const { longURL, clicks } = urlDatabase[shortURL];
+    const { longURL, visits } = urlDatabase[shortURL];
     const userId = req.session['user_id'];
     const user = getUserById(userId, userDatabase);
     const templateVars = {
       shortURL,
       longURL,
-      clicks,
+      visits,
       user,
       access: false
     };
@@ -132,10 +132,8 @@ app.get('/u/:shortURL', (req, res) => {
   }
   const timestamp = Date.now();
   // add visit to url db
-  urlDatabase[shortURL]['visits'] = {
-    visitorId,
-    timestamp
-  };
+  urlDatabase[shortURL]['visits'].push([visitorId, timestamp]);
+  console.log(urlDatabase[shortURL]['visits']);
 
   // redirect to long url given valid short url
   if (shortURL) {

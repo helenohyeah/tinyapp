@@ -43,20 +43,45 @@
       <div class="card text-center" style="padding: 1em">
         
         <h3 class="text-muted">Analytics</h3>
-        <table class="table">
+        <h4 class="my-3">Clicks</h4>
+        <table class="table table-sm table-bordered">
           <thead>
             <tr>
               <th scope="col">Total Clicks</th>
-              <!-- <th scope="col">Unique Clicks</th> -->
+              <th scope="col">Unique Clicks</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><%= clicks %></td>
-              <!-- <td>00</td> -->
+              <td><%= visits.length %></td>
+              <% let uniqueVisitors = []; %>
+              <% visits.forEach((visit) => { %>
+                <% if (!uniqueVisitors.includes(visit[0])) uniqueVisitors.push(visit[0]); %>
+              <% }); %>
+              <td><%= uniqueVisitors.length %></td>
             </tr>
           </tbody>
         </table>
+
+        <h4 class="my-3">Visitor Details</h4>
+        <table class="table table-striped table-sm table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Visitor ID</th>
+              <th scope="col">Time of Visit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (const visit of visits) { %>
+            <tr>
+              <td><%= visit[0] %></td>
+                  <% let date = new Date(visit[1]); %>
+              <td><%= date.toLocaleString() %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
       </div>
     <% } %>
 
