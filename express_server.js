@@ -30,9 +30,9 @@ app.use(methodOverride('_method'));
 
 // hardcoded url data
 const urlDatabase = {
-  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', clicks: 0 },
-  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', clicks: 0 },
-  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', clicks: 0 }
+  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', clicks: 0, visits: {} },
+  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', clicks: 0, visits: {} },
+  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', clicks: 0, visits: {} }
 };
 
 // hardcoded user data
@@ -123,11 +123,25 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const { longURL } = urlDatabase[shortURL];
-  // valid short url
+
+  // set a cookie on visitor for analytics
+  let visitorId = req.session['visitor-id'];
+  if (!visitorId) {
+    req.session['visitor-id'] = generateRandomString();
+    visitorId = req.session['visitor-id'];
+  }
+  const timestamp = Date.now();
+  // add visit to url db
+  urlDatabase[shortURL]['visits'] = {
+    visitorId,
+    timestamp
+  };
+
+  // redirect to long url given valid short url
   if (shortURL) {
     urlDatabase[shortURL]['clicks']++;
     res.redirect(longURL);
-  // invalid short url
+  // send error given invalid short url
   } else {
     res.status(404).send(`Sorry, TinyURL '${shortURL}' doesn't exist :(`);
   }
