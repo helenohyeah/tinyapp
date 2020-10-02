@@ -151,7 +151,7 @@ app.post('/urls', (req, res) => {
 });
 
 // updates the long url of a given short url
-app.post('/urls/:shortURL', (req, res) => {
+app.put('/urls/:shortURL', (req, res) => {
   const userId = req.session['user_id'];
   const { shortURL } = req.params;
   // user logged in and owns the short url
