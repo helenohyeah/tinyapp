@@ -29,6 +29,7 @@
           <tr>
             <th scope="col">Tiny URL</th>
             <th scope="col">Original URL</th>
+            <th scope="col">Clicks</th>
             <th scope="col">Edit</th>
             <th scope="col">Delete</th>
           </tr>
@@ -38,6 +39,7 @@
             <tr>
               <td><%= url %></td>
               <td><%= urls[url]['longURL'] %></td>
+              <td><%= urls[url]['clicks'] %></td>
               <td>
                 <form method="GET" action="/urls/<%= url %>">
                   <button type="link" class="btn btn-outline-primary">Edit</button>

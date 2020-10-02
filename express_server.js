@@ -30,9 +30,9 @@ app.use(methodOverride('_method'));
 
 // hardcoded url data
 const urlDatabase = {
-  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E' },
-  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E' },
-  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK' }
+  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', clicks: 0 },
+  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', clicks: 0 },
+  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', clicks: 0 }
 };
 
 // hardcoded user data
@@ -124,6 +124,7 @@ app.get('/u/:shortURL', (req, res) => {
   const { longURL } = urlDatabase[shortURL];
   // valid short url
   if (shortURL) {
+    urlDatabase[shortURL]['clicks']++;
     res.redirect(longURL);
   // invalid short url
   } else {
