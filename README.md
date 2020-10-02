@@ -18,7 +18,7 @@ View the tiny urls you created
 Edit your tiny url to point to a different url
 !["Edit your tiny url"](https://github.com/helenohyeah/tinyapp/blob/master/docs/edit-url.png?raw=true)
 Get analytics on your tiny urls
-!["Get analytics on your tiny urls"](https://github.com/helenohyeah/tinyapp/blob/master/docs/analytics-2.png?raw=true)
+!["Get analytics on your tiny urls"](https://github.com/helenohyeah/tinyapp/blob/master/docs/analytics.png?raw=true)
 
 ## Dependencies
 
