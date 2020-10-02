@@ -31,12 +31,32 @@
       <div class="card text-center" style="padding: 1em">
         <h3 class="text-muted">Edit</h3>
         <div style="margin: auto">
-        <form class="form-inline" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
+          <form class="form-inline" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
             <label for="id">New URL:</label>
             <input class="form-control m-2" type="text" name="longURL" placeholder="http://" style="width: 300px">
             <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+          </form>
+        </div>
       </div>
+      <div class="card-footer text-muted"></div>
+
+      <div class="card text-center" style="padding: 1em">
+        
+        <h3 class="text-muted">Analytics</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Total Clicks</th>
+              <!-- <th scope="col">Unique Clicks</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%= clicks %></td>
+              <!-- <td>00</td> -->
+            </tr>
+          </tbody>
+        </table>
       </div>
     <% } %>
 

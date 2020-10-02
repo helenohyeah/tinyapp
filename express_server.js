@@ -95,15 +95,16 @@ app.get('/urls/new', (req, res) => {
 // browse specific short url page
 // html handles not logged in state
 app.get('/urls/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
+  const { shortURL } = req.params;
   // valid short url
   if (shortURL in urlDatabase) {
-    const longURL = urlDatabase[shortURL]['longURL'];
+    const { longURL, clicks } = urlDatabase[shortURL];
     const userId = req.session['user_id'];
     const user = getUserById(userId, userDatabase);
     const templateVars = {
       shortURL,
       longURL,
+      clicks,
       user,
       access: false
     };
