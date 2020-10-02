@@ -30,9 +30,9 @@ app.use(methodOverride('_method'));
 
 // hardcoded url data
 const urlDatabase = {
-  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', clicks: 0, visits: [] },
-  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', clicks: 0, visits: [] },
-  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', clicks: 0, visits: [] }
+  'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', userId: '42hb2E', visits: [] },
+  '9sm5xK': { longURL: 'http://www.google.com', userId: '42hb2E', visits: [] },
+  '43hb2E': { longURL: 'http://www.spotify.com', userId: '9sDexK', visits: [] }
 };
 
 // hardcoded user data
@@ -155,7 +155,8 @@ app.post('/urls', (req, res) => {
     // adds short url to the db and associates it with the user
     urlDatabase[shortURL] = {
       longURL,
-      userId
+      userId,
+      visits: []
     };
     res.redirect(`/urls/${shortURL}`);
   // not logged in
