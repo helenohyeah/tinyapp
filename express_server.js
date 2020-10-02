@@ -133,7 +133,6 @@ app.get('/u/:shortURL', (req, res) => {
   const timestamp = Date.now();
   // add visit to url db
   urlDatabase[shortURL]['visits'].push([visitorId, timestamp]);
-  console.log(urlDatabase[shortURL]['visits']);
 
   // redirect to long url given valid short url
   if (shortURL) {
